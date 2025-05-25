@@ -1,14 +1,25 @@
 <?php
-$data = json_decode(file_get_contents("php://input"), true);
-$file = 'data.json';
+// Set CORS header (optional, useful if webpage reads this data too)
+header("Access-Control-Allow-Origin: *");
+header("Content-Type: application/json");
 
-if ($data && isset($data['id'])) {
-    $json = file_exists($file) ? json_decode(file_get_contents($file), true) : [];
-    $json[$data['id']] = $data;
-    file_put_contents($file, json_encode($json, JSON_PRETTY_PRINT));
-    echo "✅ Data saved.";
+// Read the raw POST data
+$json = file_get_contents('php://input');
+$data = json_decode($json, true);
+
+// Validate required fields
+if (isset($data['id']) && isset($data['level']) && isset($data['lat']) && isset($data['lng'])) {
+    $id = $data['id'];
+    $level = $data['level'];
+    $lat = $data['lat'];
+    $lng = $data['lng'];
+    $timestamp = date("Y-m-d H:i:s");
+
+    // Save to file (or later, to database)
+    $entry = "$timestamp - ID: $id, Level: $level%, Location: $lat,$lng\n";
+    file_put_contents("dustbin_log.txt", $entry, FILE_APPEND);
+
+    echo json_encode(["status" => "success", "message" => "Data received", "data" => $data]);
 } else {
-    echo "❌ Invalid data.";
+    echo json_encode(["status" => "error", "message" => "Invalid JSON data"]);
 }
-?>
- 
