@@ -1,0 +1,113 @@
+#include <SPI.h>
+#include <LoRa.h>
+#include <ESP8266WiFi.h>
+#include <ESP8266HTTPClient.h>
+
+// Wi-Fi credentials
+const char* ssid = "RVC-2ND FLOOR -1";
+const char* password = "9844940002";
+
+// PHP server URL
+const char* serverUrl = "http://192.168.0.175/receive.php";
+
+// LoRa pins
+#define SS 15   // GPIO15 (D8)
+#define RST 16  // GPIO16 (D0)
+#define DIO0 2  // GPIO2  (D4)
+
+void setup() {
+  Serial.begin(9600);
+  delay(1000);
+
+  WiFi.begin(ssid, password);
+  Serial.print("🔌 Connecting to Wi-Fi");
+  while (WiFi.status() != WL_CONNECTED) {
+    delay(500);
+    Serial.print(".");
+  }
+  Serial.println("\n✅ Wi-Fi Connected");
+  Serial.println("📡 IP Address: " + WiFi.localIP().toString());
+
+  // LoRa initialization
+  LoRa.setPins(SS, RST, DIO0);
+  if (!LoRa.begin(433E6)) {
+    Serial.println("❌ LoRa init failed!");
+    while (true);
+  }
+  Serial.println("✅ LoRa init successful.");
+}
+
+void loop() {
+  int packetSize = LoRa.parsePacket();
+  if (packetSize) {
+    String rawData = "";
+    while (LoRa.available()) {
+      rawData += (char)LoRa.read();
+    }
+
+    Serial.println("📩 Received LoRa: " + rawData);
+
+    String jsonPayload = parseLoRaDataToJson(rawData);
+    if (jsonPayload != "") {
+      sendToServer(jsonPayload);
+    } else {
+      Serial.println("❌ Failed to parse LoRa data.");
+    }
+  }
+}
+
+String parseLoRaDataToJson(String data) {
+  // Expected format: ID:DB02,FILL:73,LOC:17.3850,78.4867
+  String id, fill, lat, lng;
+
+  int idIndex = data.indexOf("ID:");
+  int fillIndex = data.indexOf("FILL:");
+  int locIndex = data.indexOf("LOC:");
+
+  if (idIndex == -1 || fillIndex == -1 || locIndex == -1) {
+    return "";  // Invalid format
+  }
+
+  // Extract ID
+  id = data.substring(idIndex + 3, data.indexOf(",", idIndex));
+
+  // Extract FILL
+  fill = data.substring(fillIndex + 5, data.indexOf(",", fillIndex));
+
+  // Extract LOC (lat, lng)
+  String locData = data.substring(locIndex + 4);
+  int commaIndex = locData.indexOf(",");
+  lat = locData.substring(0, commaIndex);
+  lng = locData.substring(commaIndex + 1);
+
+  // Format JSON
+  String json = "{";
+  json += "\"id\":\"" + id + "\",";
+  json += "\"level\":" + fill + ",";
+  json += "\"lat\":\"" + lat + "\",";
+  json += "\"lng\":\"" + lng + "\"";
+  json += "}";
+
+  return json;
+}
+
+void sendToServer(String jsonData) {
+  if (WiFi.status() == WL_CONNECTED) {
+    WiFiClient client;
+    HTTPClient http;
+
+    http.begin(client, serverUrl);  // ✅ Correct syntax for latest ESP8266 core
+    http.addHeader("Content-Type", "application/json");
+
+    int httpCode = http.POST(jsonData);
+    String response = http.getString();
+
+    Serial.println("📤 Sent to Server: " + jsonData);
+    Serial.println("✅ HTTP Code: " + String(httpCode));
+    Serial.println("🧾 Response: " + response);
+
+    http.end();
+  } else {
+    Serial.println("❌ Wi-Fi not connected.");
+  }
+}
