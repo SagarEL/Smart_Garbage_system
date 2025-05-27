@@ -1,0 +1,50 @@
+[
+  {
+    "street": "Street 1",
+    "predicted_bin_count": 2,
+    "suggested_bin_types": [
+      "Organic",
+      "Metal"
+    ],
+    "suggested_location": {
+      "latitude": 12.917983,
+      "longitude": 77.495712
+    }
+  },
+  {
+    "street": "Street 2",
+    "predicted_bin_count": 2,
+    "suggested_bin_types": [
+      "Organic",
+      "Metal"
+    ],
+    "suggested_location": {
+      "latitude": 12.917522,
+      "longitude": 77.49771
+    }
+  },
+  {
+    "street": "Street 3",
+    "predicted_bin_count": 2,
+    "suggested_bin_types": [
+      "Organic",
+      "Metal"
+    ],
+    "suggested_location": {
+      "latitude": 12.917241,
+      "longitude": 77.497549
+    }
+  },
+  {
+    "street": "Street 4",
+    "predicted_bin_count": 3,
+    "suggested_bin_types": [
+      "Organic",
+      "Metal"
+    ],
+    "suggested_location": {
+      "latitude": 12.917215,
+      "longitude": 77.4961
+    }
+  }
+]

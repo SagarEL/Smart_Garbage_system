@@ -1,0 +1,87 @@
+body {
+  margin: 0;
+  font-family: 'Segoe UI', sans-serif;
+  background: linear-gradient(to right, #f0f4f8, #eaf4ff);
+  color: #333;
+}
+
+header {
+  background: linear-gradient(90deg, #4facfe, #00f2fe);
+  color: white;
+  padding: 20px 10px;
+  text-align: center;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+}
+
+header i {
+  margin-right: 10px;
+}
+
+main {
+  max-width: 1200px;
+  margin: 30px auto;
+  padding: 0 20px;
+}
+
+.suggestions-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(330px, 1fr));
+  gap: 20px;
+}
+
+.suggestion-card {
+  background: linear-gradient(145deg, #ffffff, #d9f0ff);
+  border-radius: 15px;
+  padding: 20px;
+  box-shadow: 0 8px 20px rgba(0, 174, 255, 0.1);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  border-left: 6px solid #00b4d8;
+}
+
+.suggestion-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 12px 25px rgba(0, 174, 255, 0.25);
+}
+
+.suggestion-card h2 {
+  color: #0077b6;
+  margin-bottom: 12px;
+}
+
+.suggestion-card p {
+  margin: 10px 0;
+  font-size: 15px;
+  line-height: 1.6;
+}
+
+.suggestion-card i {
+  margin-right: 8px;
+  color: #0096c7;
+}
+
+footer {
+  text-align: center;
+  padding: 20px;
+  color: #666;
+  background-color: #eaf4ff;
+  border-top: 1px solid #ccc;
+}
+
+/* Make icons pop with type-specific colors */
+span {
+  margin-right: 5px;
+  display: inline-block;
+}
+
+span i.fa-leaf {
+  color: #28a745; /* Green for organic */
+}
+
+span i.fa-bottle-water {
+  color: #ff9800; /* Orange for plastic */
+}
+
+span i.fa-cogs {
+  color: #6f42c1; /* Purple for metal */
+}
+
